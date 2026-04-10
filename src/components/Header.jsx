@@ -117,7 +117,7 @@ const Header = () => {
             </motion.span>
           </div>
         </motion.div>
-        {/* 2. THE FILLER: CENTER NAME (MOBILE ONLY) */}
+        {/* 2.  CENTER NAME (MOBILE ONLY) */}
         <motion.div
           initial={{ opacity: 0, y: -50 }} // Starts above the screen
           animate={{ opacity: 1, y: 0 }} // Drops into position
@@ -262,7 +262,7 @@ const Header = () => {
           initial={{ opacity: 0, x: 30 }} // Matches logo (which comes from -30, this comes from +30)
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="md:hidden flex items-center z-[100] relative"
+          className="md:hidden flex items-center z-100 relative"
         >
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -301,7 +301,7 @@ const Header = () => {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-0 h-screen w-full bg-black/95 backdrop-blur-xl z-[80] flex flex-col items-center justify-center"
+              className="fixed inset-0 h-screen w-full bg-black/95 backdrop-blur-xl z-80 flex flex-col items-center justify-center"
             >
               {/* 1. LINKS */}
               <nav className="flex flex-col items-center gap-8">
