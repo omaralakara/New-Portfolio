@@ -117,6 +117,31 @@ const Header = () => {
             </motion.span>
           </div>
         </motion.div>
+        {/* 2. THE FILLER: CENTER NAME (MOBILE ONLY) */}
+        <motion.div
+          initial={{ opacity: 0, y: -50 }} // Starts above the screen
+          animate={{ opacity: 1, y: 0 }} // Drops into position
+          transition={{
+            type: "spring",
+            stiffness: 120,
+            damping: 14,
+            delay: 0.3,
+          }}
+          className="md:hidden absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
+        >
+          {/* THE TEXT WITH SHARP GRADIENT */}
+          <span className="text-sm font-black tracking-tighter uppercase italic bg-clip-text text-transparent bg-linear-to-b from-white via-white to-cyan-500 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]">
+            OmarAlakara
+          </span>
+
+          {/* THE SHARP GLOW LINE */}
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: "100%", opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="h-[2px] w-full bg-linear-to-r from-transparent via-cyan-400 to-transparent mt-0.5 shadow-[0_0_10px_#22d3ee]"
+          />
+        </motion.div>
         {/* NAV */}
         <nav className="hidden md:flex items-center justify-center gap-8">
           {navItems.map((item, index) => (
@@ -233,21 +258,41 @@ const Header = () => {
           </motion.button>
         </motion.div>
         {/* MOBILE TOGGLE BUTTON */}
-        <div className="md:hidden flex items-center z-[100] relative">
-          {" "}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }} // Matches logo (which comes from -30, this comes from +30)
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="md:hidden flex items-center z-[100] relative"
+        >
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-white text-3xl p-2 transition-colors hover:text-cyan-400"
+            className="relative p-2 group"
           >
             <motion.div
               initial={false}
-              animate={{ rotate: isOpen ? 90 : 0 }}
+              animate={{
+                rotate: isOpen ? 90 : 0,
+                color: isOpen ? "#22d3ee" : "#ffffff", // Swaps to Cyan when open
+              }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              className="text-3xl relative z-10"
             >
               {isOpen ? <FiX /> : <FiMenu />}
             </motion.div>
+
+            {/* COOL COLOR GLOW BEHIND THE ICON */}
+            <motion.div
+              animate={{
+                opacity: isOpen ? 1 : 0,
+                scale: isOpen ? 1.2 : 0.8,
+              }}
+              className="absolute inset-0 bg-cyan-500/20 blur-md rounded-full -z-10"
+            />
+
+            {/* HOVER EFFECT (Matches your other buttons) */}
+            <div className="absolute inset-0 rounded-xl bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
-        </div>
+        </motion.div>
         {/* MOBILE MENU OVERLAY */}
         <AnimatePresence>
           {isOpen && (
