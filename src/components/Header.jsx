@@ -443,18 +443,23 @@ const Header = () => {
                         <div className="absolute inset-0 rounded-full border border-white/10 scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300" />
                       </button>
                     </div>
-
-                    <p className="text-zinc-400 mb-8 leading-relaxed">
-                      I'm currently available for{" "}
+                    <p className="text-zinc-400 mb-6 lg:mb-8 leading-relaxed text-sm lg:text-[15px]">
+                      I’m currently open to{" "}
+                      <span className="text-white font-semibold">
+                        Full-Stack Development
+                      </span>
+                      ,{" "}
+                      <span className="text-white font-semibold">Shopify</span>,
+                      and specialized{" "}
                       <span className="text-white font-semibold">
                         Cloud Architecture
                       </span>{" "}
-                      &{" "}
-                      <span className="text-white font-semibold">
-                        Full-Stack
+                      projects. I’m also keen on{" "}
+                      <span className="text-cyan-400/90 italic">
+                        learning-driven opportunities
                       </span>{" "}
-                      projects. Drop your email and a brief note—I'll get back
-                      to you within 24 hours.
+                      that push technical boundaries. Drop a note—I’ll respond
+                      within 24 hours.
                     </p>
 
                     <form className="space-y-4">
