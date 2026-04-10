@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { FiGithub, FiLinkedin, FiInstagram } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiGithub, FiLinkedin, FiInstagram, FiMenu, FiX } from "react-icons/fi";
 import { useState } from "react";
 
 const navItems = ["Home", "About", "Projects", "Experience", "Contact"];
@@ -7,8 +7,10 @@ const navItems = ["Home", "About", "Projects", "Experience", "Contact"];
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <motion.header className="fixed top-0 w-full z-50 bg-transparent">
-      <div className="container mx-auto px-6 h-20 grid grid-cols-3 items-center">
+    <motion.header className="fixed top-0 w-full z-50 bg-black/30 backdrop-blur-md border-b border-white/5">
+      {" "}
+      <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+        {" "}
         {/* LOGO */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
@@ -29,7 +31,7 @@ const Header = () => {
                   initial: { opacity: 1 },
                   hover: { opacity: 0 },
                 }}
-                className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-cyan-400 to-blue-600"
+                className="absolute inset-0 bg-linear-to-br from-cyan-500 via-cyan-400 to-blue-600"
               />
 
               {/* 2. THE HOVER BACKGROUND (Fades in - glassy look) */}
@@ -48,7 +50,7 @@ const Header = () => {
                   hover: { x: "150%", opacity: 1 },
                 }}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-10"
+                className="absolute inset-0 bg-linear-to-br from-transparent via-white/40 to-transparent z-10"
               />
 
               {/* 4. THE LETTER "O" */}
@@ -59,7 +61,7 @@ const Header = () => {
                 }}
                 className="relative z-20 font-bold text-lg transition-colors duration-300"
               >
-                O
+                O.A
               </motion.span>
 
               {/* 5. OUTER GLOW EFFECT */}
@@ -101,7 +103,7 @@ const Header = () => {
                 }}
                 className="absolute inset-0 z-20 pointer-events-none"
               >
-                <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent skew-x-12" />
+                <div className="w-1/2 h-full bg-linear-to-br from-transparent via-cyan-400/40 to-transparent skew-x-12" />
               </motion.div>
 
               {/* VERY SUBTLE UNDERLINE (Optional - remove if you want it even cleaner) */}
@@ -110,12 +112,11 @@ const Header = () => {
                   initial: { scaleX: 0, opacity: 0 },
                   hover: { scaleX: 1, opacity: 1 },
                 }}
-                className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent origin-left"
+                className="absolute bottom-0 left-0 w-full h-px bg-linear-to-br from-transparent via-cyan-500/50 to-transparent origin-left"
               />
             </motion.span>
           </div>
         </motion.div>
-
         {/* NAV */}
         <nav className="hidden md:flex items-center justify-center gap-8">
           {navItems.map((item, index) => (
@@ -134,19 +135,18 @@ const Header = () => {
                 {item}
               </span>
 
-              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-linear-to-br from-cyan-400 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
 
               <span className="absolute inset-0 opacity-0 group-hover:opacity-100 blur-md bg-cyan-400/20 transition duration-300 rounded-md"></span>
             </motion.div>
           ))}
         </nav>
-
         {/* RIGHT SIDE */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex justify-end items-center gap-5"
+          className="hidden md:flex justify-end items-center gap-5"
         >
           <div className="flex items-center gap-4">
             {[FiGithub, FiLinkedin, FiInstagram].map((Icon, i) => (
@@ -189,7 +189,7 @@ const Header = () => {
                 initial: { opacity: 1 },
                 hover: { opacity: 0 },
               }}
-              className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-600"
+              className="absolute inset-0 bg-linear-to-br from-cyan-500 to-blue-600"
             />
 
             {/* 2. THE HOVER BACKGROUND (Fades in - glassy look for black backgrounds) */}
@@ -208,7 +208,7 @@ const Header = () => {
                 hover: { x: "100%", opacity: 1 },
               }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent z-10"
+              className="absolute inset-0 bg-linear-to-br from-transparent via-white/30 to-transparent z-10"
             />
 
             {/* 4. THE TEXT */}
@@ -232,6 +232,96 @@ const Header = () => {
             />
           </motion.button>
         </motion.div>
+        {/* MOBILE TOGGLE BUTTON */}
+        <div className="md:hidden flex items-center z-[100] relative">
+          {" "}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-white text-3xl p-2 transition-colors hover:text-cyan-400"
+          >
+            <motion.div
+              initial={false}
+              animate={{ rotate: isOpen ? 90 : 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            >
+              {isOpen ? <FiX /> : <FiMenu />}
+            </motion.div>
+          </button>
+        </div>
+        {/* MOBILE MENU OVERLAY */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed inset-0 h-screen w-full bg-black/95 backdrop-blur-xl z-[80] flex flex-col items-center justify-center"
+            >
+              {/* 1. LINKS */}
+              <nav className="flex flex-col items-center gap-8">
+                {navItems.map((item, index) => (
+                  <motion.a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
+                    onClick={() => setIsOpen(false)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + index * 0.1 }}
+                    className="text-3xl font-bold tracking-tighter text-zinc-500 hover:text-white transition-colors"
+                  >
+                    {item}
+                  </motion.a>
+                ))}
+              </nav>
+
+              {/* 2. MOBILE HIRE ME BUTTON */}
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                whileHover="hover"
+                className="mt-12 relative px-10 py-4 rounded-xl overflow-hidden flex items-center justify-center"
+              >
+                <motion.div
+                  variants={{ initial: { opacity: 1 }, hover: { opacity: 0 } }}
+                  className="absolute inset-0 bg-linear-to-br from-cyan-500 to-blue-600"
+                />
+                <motion.div
+                  variants={{ initial: { opacity: 0 }, hover: { opacity: 1 } }}
+                  className="absolute inset-0 bg-cyan-950/40 border border-cyan-500/50 rounded-xl"
+                />
+                <motion.span
+                  variants={{
+                    initial: { color: "#ffffff" },
+                    hover: { color: "#22d3ee" },
+                  }}
+                  className="relative z-20 text-sm font-black uppercase tracking-widest"
+                >
+                  Hire Me
+                </motion.span>
+              </motion.button>
+
+              {/* 3. MOBILE SOCIALS */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="flex gap-10 mt-12"
+              >
+                {[FiGithub, FiLinkedin, FiInstagram].map((Icon, i) => (
+                  <a
+                    key={i}
+                    href="#"
+                    className="text-3xl text-zinc-500 hover:text-cyan-400 transition-colors"
+                  >
+                    <Icon />
+                  </a>
+                ))}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.header>
   );
