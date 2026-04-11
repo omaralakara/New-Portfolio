@@ -2,86 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { motion, animate } from "framer-motion";
 import Spline from "@splinetool/react-spline";
 
-// ── Floating Balls: Optimized with Pre-calculated Colors ──────────────────────
-const FloatingBalls = () => {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false }); // Performance boost: ignore alpha channel on the canvas itself if possible
-
-    let W = (canvas.width = canvas.offsetWidth);
-    let H = (canvas.height = canvas.offsetHeight);
-    let raf;
-
-    const onResize = () => {
-      W = canvas.width = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
-    };
-    window.addEventListener("resize", onResize);
-
-    const rand = (a, b) => a + Math.random() * (b - a);
-    const COLORS = ["34,211,238", "59,130,246", "255,255,255"];
-
-    const balls = Array.from({ length: 14 }, () => ({
-      x: rand(0, W),
-      y: rand(0, H),
-      r: rand(1.2, 3.5),
-      vx: rand(-0.1, 0.1),
-      vy: rand(-0.1, 0.1),
-      baseAlpha: rand(0.04, 0.12),
-      rgb: COLORS[Math.floor(Math.random() * COLORS.length)],
-      phase: rand(0, Math.PI * 2),
-      pSpeed: rand(0.01, 0.02),
-    }));
-
-    let tick = 0;
-    const draw = () => {
-      // Use a slightly opaque clear to create a "trail" effect if you like,
-      // but clearRect is fastest.
-      ctx.fillStyle = "#050508";
-      ctx.fillRect(0, 0, W, H);
-
-      tick += 0.5;
-
-      for (let i = 0; i < balls.length; i++) {
-        const b = balls[i];
-        b.x += b.vx;
-        b.y += b.vy;
-
-        if (b.x < -5) b.x = W + 5;
-        if (b.x > W + 5) b.x = -5;
-        if (b.y < -5) b.y = H + 5;
-        if (b.y > H + 5) b.y = -5;
-
-        // Optimization: Avoid toFixed() in the loop. Use simple math.
-        const alpha =
-          b.baseAlpha * (0.7 + 0.3 * Math.sin(tick * b.pSpeed + b.phase));
-
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${b.rgb}, ${alpha})`;
-        ctx.fill();
-      }
-      raf = requestAnimationFrame(draw);
-    };
-    draw();
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-0"
-    />
-  );
-};
-
 // ── Counter: Refined Logic ─────────────────────────────────────────────────────
 const Counter = ({ to, suffix = "" }) => {
   const ref = useRef(null);
@@ -112,6 +32,7 @@ const Counter = ({ to, suffix = "" }) => {
 
   return <span ref={ref}>0{suffix}</span>;
 };
+
 // ── Hero ──────────────────────────────────────────────────────────────────────
 const Hero = () => {
   const [splineReady, setSplineReady] = useState(false);
@@ -128,7 +49,7 @@ const Hero = () => {
 
   useEffect(() => {
     if (isMobile) return;
-    const t = setTimeout(() => setMountSpline(true), 1400);
+    const t = setTimeout(() => setMountSpline(true), 2000);
     return () => clearTimeout(t);
   }, [isMobile]);
 
@@ -139,13 +60,13 @@ const Hero = () => {
         width: "100%",
         height: "100dvh",
         minHeight: "100dvh",
-        background: "#050508",
+        background: "linear-gradient(180deg, #0a0a14 0%, #050508 100%)", // Rich base
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
       }}
     >
-      {/* ── BACKGROUND ── */}
+      {/* ── BACKGROUND LAYER ── */}
       <div
         style={{
           position: "absolute",
@@ -154,37 +75,53 @@ const Hero = () => {
           pointerEvents: "none",
         }}
       >
+        {/* 1. Top Ambient Light Leak */}
         <div
           style={{
             position: "absolute",
-            top: -100,
+            top: -150,
             left: "50%",
             transform: "translateX(-50%)",
-            width: 700,
-            height: 380,
+            width: "100%",
+            height: 600,
             background:
-              "radial-gradient(ellipse 55% 50% at 50% 0%, rgba(34,211,238,0.10) 0%, transparent 70%)",
-            filter: "blur(48px)",
+              "radial-gradient(circle at 50% 0%, rgba(34,211,238,0.08) 0%, transparent 75%)",
+            filter: "blur(100px)",
           }}
         />
+
+        {/* 2. The Fading Grid */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)
+              linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
             `,
             backgroundSize: "72px 72px",
+            // This is the magic: Grid disappears before it hits the bottom
             WebkitMaskImage:
-              "radial-gradient(ellipse 75% 65% at 50% 40%, black 0%, transparent 68%)",
-            maskImage:
-              "radial-gradient(ellipse 75% 65% at 50% 40%, black 0%, transparent 68%)",
+              "linear-gradient(to bottom, black 20%, transparent 85%)",
+            maskImage: "linear-gradient(to bottom, black 20%, transparent 85%)",
+            opacity: 0.6,
           }}
         />
-        <FloatingBalls />
-      </div>
 
+        {/* 3. Bottom Deep Blur (The "Melt") */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "40%",
+            background:
+              "linear-gradient(to top, #050508 20%, transparent 100%)",
+            zIndex: 2,
+          }}
+        />
+      </div>
       {/* ── ALIGNED CONTENT WRAPPER ── */}
       <div className="container mx-auto px-6 relative z-10">
         <div
@@ -262,7 +199,7 @@ const Hero = () => {
             <p
               style={{
                 fontSize: "clamp(13px, 1.4vw, 15px)",
-                color: "#A1A1AA", // Lightened from 3f3f46 for better readability
+                color: "#A1A1AA",
                 lineHeight: 1.7,
                 maxWidth: 440,
                 margin: 0,
@@ -384,7 +321,7 @@ const Hero = () => {
           bottom: 0,
           left: 0,
           right: 0,
-          height: 120,
+          height: "30%",
           background: "linear-gradient(to top, #050508, transparent)",
           zIndex: 30,
           pointerEvents: "none",
