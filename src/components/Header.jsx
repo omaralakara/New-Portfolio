@@ -3,7 +3,14 @@ import { FiGithub, FiLinkedin, FiInstagram, FiMenu, FiX } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom"; // Add this to your imports
 
-const navItems = ["Home", "About", "Projects", "Experience", "Contact"];
+const navItems = [
+  "Home",
+  "About",
+  "Skills",
+  "Projects",
+  "Experience",
+  "Contact",
+];
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,8 +24,13 @@ const Header = () => {
       document.body.style.overflow = "unset";
     }
   }, [isModalOpen]);
+
+  const handleSubmit = () => {
+    // your form logic here (validation, API call, etc.)
+    setIsModalOpen(false);
+  };
   return (
-    <motion.header className="fixed top-0 w-full z-50 bg-black/30 backdrop-blur-md border-b border-white/5">
+    <motion.header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-sm border-b border-white/[0.04]">
       {" "}
       <div className="container mx-auto px-6 h-20 flex items-center justify-between">
         {" "}
@@ -462,7 +474,7 @@ const Header = () => {
                       within 24 hours.
                     </p>
 
-                    <form className="space-y-4">
+                    <div className="space-y-4">
                       {/* NAME FIELD */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div className="space-y-1">
@@ -527,6 +539,8 @@ const Header = () => {
                         />
                       </div>
                       <motion.button
+                        type="button"
+                        onClick={handleSubmit}
                         whileHover="hover"
                         initial="initial"
                         whileTap={{ scale: 0.98 }}
@@ -580,7 +594,7 @@ const Header = () => {
                           className="absolute inset-0 bg-cyan-500/20 blur-xl -z-10"
                         />
                       </motion.button>
-                    </form>
+                    </div>
                   </div>
 
                   {/* BACKGROUND DECORATION */}
