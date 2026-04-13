@@ -7,6 +7,16 @@ const CustomCursor = () => {
     const outline = document.getElementById("cursor-outline");
     const trail = document.querySelectorAll(".cursor-trail"); // Target the tail particles
 
+    const hasMouse = window.matchMedia("(any-pointer: fine)").matches;
+    const isLargeEnough = window.innerWidth >= 768;
+
+    // Only initialize if it's a desktop/laptop with a mouse
+    if (!hasMouse || !isLargeEnough) {
+      gsap.set(["#cursor-dot", "#cursor-outline", ".cursor-trail"], {
+        display: "none",
+      });
+      return;
+    }
     const onMouseMove = (e) => {
       const { clientX, clientY } = e;
 
