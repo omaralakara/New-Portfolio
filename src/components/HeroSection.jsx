@@ -1,349 +1,284 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, animate } from "framer-motion";
-import Spline from "@splinetool/react-spline";
+// STEP 6 — GSAP entrance animations.
+// Only animates opacity + transform — zero layout cost, runs on GPU.
+// gsap.context() scopes everything and ctx.revert() cleans up on unmount.
 
-// ── Counter: Refined Logic ─────────────────────────────────────────────────────
-const Counter = ({ to, suffix = "" }) => {
-  const ref = useRef(null);
+import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+
+// ── Spline lazy loaded so it never blocks the initial render
+const Spline = lazy(() => import("@splinetool/react-spline"));
+
+// ── Roles defined outside — prevents typewriter glitch
+const ROLES = [
+  "Software Developer",
+  "Cloud Architect",
+  "Fintech Solutions",
+  "Problem Solver",
+];
+
+// ─── LOADING ANIMATION ────────────────────────────────────────────────────────
+const LoadingLogo = () => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0, scale: 1.5, filter: "blur(20px)" }}
+    className="relative flex flex-col items-center justify-center w-48 h-48"
+  >
+    <div className="relative flex items-center justify-center w-full h-full">
+      <motion.div
+        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute w-16 h-16 bg-cyan-500/20 blur-2xl rounded-full"
+      />
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        className="absolute w-32 h-32 border border-dashed border-cyan-500/20 rounded-full"
+      />
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+        className="absolute w-24 h-24 border-t-2 border-l-2 border-cyan-400 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+      />
+      <motion.div
+        animate={{ top: ["10%", "90%", "10%"], opacity: [0, 1, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        className="absolute w-full h-[1px] bg-linear-to-r from-transparent via-cyan-400 to-transparent z-10"
+      />
+    </div>
+    <div className="mt-8 flex flex-col items-center gap-2">
+      <motion.span
+        animate={{ opacity: [0.4, 1, 0.4] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+        className="text-[10px] font-black uppercase tracking-[0.5em] text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]"
+      >
+        System Boot
+      </motion.span>
+      <div className="flex gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            animate={{
+              backgroundColor: ["#18181b", "#22d3ee", "#18181b"],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+            className="w-1 h-1 rounded-full"
+          />
+        ))}
+      </div>
+    </div>
+  </motion.div>
+);
+
+// ─── TYPEWRITER HOOK ──────────────────────────────────────────────────────────
+function useTypewriter(words) {
+  const [displayed, setDisplayed] = useState("");
+  const indexRef = useRef(0);
+  const isDeletingRef = useRef(false);
+  const textRef = useRef("");
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          animate(0, to, {
-            duration: 2,
-            ease: "circOut",
-            onUpdate: (v) => {
-              node.textContent = Math.floor(v) + suffix;
-            },
-          });
-          observer.unobserve(node);
+    let timeout;
+    const tick = () => {
+      const current = words[indexRef.current % words.length];
+      const isDeleting = isDeletingRef.current;
+      if (!isDeleting) {
+        textRef.current = current.slice(0, textRef.current.length + 1);
+        setDisplayed(textRef.current);
+        if (textRef.current === current) {
+          timeout = setTimeout(() => {
+            isDeletingRef.current = true;
+            tick();
+          }, 2000);
+          return;
         }
-      },
-      { threshold: 0.1 },
-    );
+        timeout = setTimeout(tick, 80);
+      } else {
+        textRef.current = current.slice(0, textRef.current.length - 1);
+        setDisplayed(textRef.current);
+        if (textRef.current === "") {
+          isDeletingRef.current = false;
+          indexRef.current = indexRef.current + 1;
+          timeout = setTimeout(tick, 400);
+          return;
+        }
+        timeout = setTimeout(tick, 45);
+      }
+    };
+    timeout = setTimeout(tick, 800);
+    return () => clearTimeout(timeout);
+  }, []); // ← empty, runs once only
 
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [to, suffix]);
+  return displayed;
+}
 
-  return <span ref={ref}>0{suffix}</span>;
-};
+// ─── HERO ─────────────────────────────────────────────────────────────────────
+function HeroSection() {
+  const role = useTypewriter(ROLES);
+  const mousePos = useRef({ x: 0, y: 0 });
+  const [showRobot, setShowRobot] = useState(false);
+  const containerRef = useRef(); // GSAP scope
 
-// ── Hero ──────────────────────────────────────────────────────────────────────
-const Hero = () => {
-  const [splineReady, setSplineReady] = useState(false);
-  const [mountSpline, setMountSpline] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
+  // Show robot after loading animation
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 900px)");
-    setIsMobile(mq.matches);
-    const handler = (e) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const timer = setTimeout(() => setShowRobot(true), 2500);
+    return () => clearTimeout(timer);
   }, []);
 
+  // Mouse tracking
   useEffect(() => {
-    if (isMobile) return;
-    const t = setTimeout(() => setMountSpline(true), 2000);
-    return () => clearTimeout(t);
-  }, [isMobile]);
+    const handleMove = (e) => {
+      mousePos.current = {
+        x: (e.clientX / window.innerWidth - 0.5) * 2,
+        y: (e.clientY / window.innerHeight - 0.5) * 2,
+      };
+    };
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, []);
+
+  // ── GSAP entrance ──────────────────────────────────────────────────────────
+  // Runs once on mount. Only uses opacity + translateY + skewY (all GPU, no layout cost).
+  // gsap.context() scopes selectors to containerRef so they never
+  // accidentally target elements in other sections.
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Hide everything first so there's no flash before the animation runs
+      gsap.set([".hero-tagline", ".hero-role", ".hero-desc"], {
+        opacity: 0,
+        y: 40,
+      });
+
+      // Build the timeline
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl
+        // Tagline sweeps up — slight skew gives it an editorial feel
+        .to(".hero-tagline", {
+          opacity: 1,
+          y: 0,
+          skewY: 0,
+          duration: 0.9,
+          delay: 0.2,
+        })
+        // Role line follows
+        .to(
+          ".hero-role",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.65,
+          },
+          "-=0.4",
+        ) // starts 0.4s before tagline finishes — feels connected
+        // Description last
+        .to(
+          ".hero-desc",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.65,
+          },
+          "-=0.35",
+        );
+    }, containerRef); // ← scoped to this section only
+
+    // Cleanup — kills all animations and reverts inline styles on unmount
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100dvh",
-        minHeight: "100dvh",
-        background: "linear-gradient(180deg, #0a0a14 0%, #050508 100%)", // Rich base
-        overflow: "hidden",
-        display: "flex",
-        alignItems: "center",
-      }}
+      ref={containerRef}
+      className="relative h-screen overflow-hidden flex items-center"
     >
-      {/* ── BACKGROUND LAYER ── */}
       <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-        }}
+        className="w-full h-full grid
+                   grid-cols-1              grid-rows-[55fr_45fr]
+                   lg:grid-cols-[55fr_45fr] lg:grid-rows-1
+                   pt-20 px-6 container mx-auto gap-6"
       >
-        {/* 1. Top Ambient Light Leak */}
+        {/* ── LEFT — text content ── */}
         <div
-          style={{
-            position: "absolute",
-            top: -150,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "100%",
-            height: 600,
-            background:
-              "radial-gradient(circle at 50% 0%, rgba(34,211,238,0.08) 0%, transparent 75%)",
-            filter: "blur(100px)",
-          }}
-        />
-
-        {/* 2. The Fading Grid */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
-            `,
-            backgroundSize: "72px 72px",
-            // This is the magic: Grid disappears before it hits the bottom
-            WebkitMaskImage:
-              "linear-gradient(to bottom, black 20%, transparent 85%)",
-            maskImage: "linear-gradient(to bottom, black 20%, transparent 85%)",
-            opacity: 0.6,
-          }}
-        />
-
-        {/* 3. Bottom Deep Blur (The "Melt") */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "40%",
-            background:
-              "linear-gradient(to top, #050508 20%, transparent 100%)",
-            zIndex: 2,
-          }}
-        />
-      </div>
-      {/* ── ALIGNED CONTENT WRAPPER ── */}
-      <div className="container mx-auto px-6 relative z-10">
-        <div
-          className="hero-inner"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 40,
-            width: "100%",
-          }}
+          className="flex flex-col justify-center
+                     items-center text-center
+                     lg:items-start lg:text-left"
         >
-          {/* ── LEFT ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-            className="hero-left"
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: 28,
-            }}
+          {/* Tagline — GSAP target: .hero-tagline */}
+          <h1
+            className="hero-tagline
+                       text-[clamp(2.8rem,6.5vw,5.2rem)]
+                       font-black tracking-tight leading-[1.05]
+                       text-white mb-6"
+            style={{ transform: "skewY(-1.5deg)" }} // starts slightly skewed, GSAP resets to 0
           >
-            {/* Badge */}
-            <div
+            I Build Things
+            <br />
+            <span
+              className="bg-clip-text text-transparent"
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "5px 14px 5px 8px",
-                background: "rgba(34,211,238,0.05)",
-                border: "1px solid rgba(34,211,238,0.15)",
-                borderRadius: 100,
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                color: "#22d3ee",
+                backgroundImage:
+                  "linear-gradient(90deg, #22d3ee 0%, #67e8f9 45%, #3b82f6 100%)",
               }}
             >
+              For The Web.
+            </span>
+          </h1>
+
+          {/* Role line — GSAP target: .hero-role */}
+          <div className="hero-role flex items-center gap-3 mb-6 h-6">
+            <span className="w-6 h-px bg-cyan-500/70 shrink-0 hidden lg:block" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-zinc-400">
+              {role}
               <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: "#22d3ee",
-                  boxShadow: "0 0 6px #22d3ee",
-                  animation: "blink 2s ease-in-out infinite",
-                }}
+                className="inline-block w-[2px] h-[13px] bg-cyan-400
+                               ml-[2px] align-middle animate-pulse"
               />
-              Available for Work
-            </div>
+            </span>
+          </div>
 
-            {/* Headline */}
-            <h1
-              style={{
-                fontSize: "clamp(38px, 5.5vw, 72px)",
-                fontWeight: 900,
-                lineHeight: 0.92,
-                letterSpacing: "-0.04em",
-                color: "#fff",
-                margin: 0,
-              }}
-            >
-              Code That <span style={{ color: "#22d3ee" }}>Converts.</span>
-              <br />
-              Products That <span style={{ color: "#3b82f6" }}>Scale.</span>
-            </h1>
+          {/* Description — GSAP target: .hero-desc */}
+          <p
+            className="hero-desc
+                       text-zinc-500 text-sm leading-[1.85]
+                       max-w-[380px] lg:max-w-[400px]"
+          >
+            I craft fast, scalable web experiences — from pixel-perfect
+            frontends to cloud-native backends. Based in{" "}
+            <span className="text-zinc-300 font-medium">Lebanon</span>, shipping{" "}
+            <span className="text-zinc-300 font-medium">globally</span>.
+          </p>
+        </div>
 
-            {/* Subtext */}
-            <p
-              style={{
-                fontSize: "clamp(13px, 1.4vw, 15px)",
-                color: "#A1A1AA",
-                lineHeight: 1.7,
-                maxWidth: 440,
-                margin: 0,
-              }}
-            >
-              Full-stack engineering · Cloud-native solutions ·{" "}
-              <span style={{ color: "#22d3ee", fontWeight: 500 }}>
-                FinTech Architecture
-              </span>
-            </p>
-
-            {/* Stats */}
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                background: "rgba(9,9,11,0.55)",
-                border: "1px solid rgba(255,255,255,0.05)",
-                borderRadius: 14,
-                overflow: "hidden",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
-              }}
-            >
-              {[
-                { to: 3, suffix: "+", label: "Years" },
-                { to: 24, suffix: "+", label: "Projects" },
-                { to: 100, suffix: "%", label: "Trust" },
-              ].map((s, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    padding: "10px 26px",
-                    borderRight:
-                      i !== 2 ? "1px solid rgba(255,255,255,0.05)" : "none",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "'Courier New', monospace",
-                      fontSize: "clamp(17px, 2vw, 22px)",
-                      fontWeight: 700,
-                      color: "#e4e4e7",
-                    }}
-                  >
-                    <Counter to={s.to} suffix={s.suffix} />
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 8,
-                      fontWeight: 700,
-                      letterSpacing: "0.2em",
-                      textTransform: "uppercase",
-                      color: "#71717A",
-                      marginTop: 3,
-                    }}
-                  >
-                    {s.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* ── RIGHT — SPLINE ── */}
-          {!isMobile && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: 0.5 }}
-              style={{
-                position: "relative",
-                flex: "0 0 auto",
-                width: "min(520px, 48%)",
-                height: 580,
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  zIndex: 1,
-                  overflow: "hidden",
-                }}
+        {/* ── RIGHT — Spline robot ── */}
+        <div className="relative w-full h-full flex items-center justify-center min-h-[400px]">
+          <AnimatePresence mode="wait">
+            {!showRobot ? (
+              <motion.div key="loader">
+                <LoadingLogo />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="spline"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.2 }}
+                className="w-full h-full"
               >
-                {mountSpline ? (
-                  <>
-                    {!splineReady && (
-                      <div className="flex items-center justify-center absolute inset-0 z-10">
-                        <div className="w-8 h-8 border-2 border-white/5 border-t-cyan-400 rounded-full animate-spin" />
-                      </div>
-                    )}
-                    <Spline
-                      scene="https://prod.spline.design/4wdSfkDAruaZ-0A5/scene.splinecode"
-                      onLoad={() => setSplineReady(true)}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        transform: "scale(1.2) translate(10px, 10px)",
-                        opacity: splineReady ? 1 : 0,
-                        transition: "opacity 0.8s ease",
-                      }}
-                    />
-                  </>
-                ) : null}
-              </div>
-            </motion.div>
-          )}
+                <Suspense fallback={null}>
+                  <div className="w-full h-full scale-[1.05] origin-center">
+                    <Spline scene="https://prod.spline.design/Vb-xcbhbH3Sv0Iea/scene.splinecode" />
+                  </div>
+                </Suspense>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-
-      {/* Bottom Fade Out */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "30%",
-          background: "linear-gradient(to top, #050508, transparent)",
-          zIndex: 30,
-          pointerEvents: "none",
-        }}
-      />
-
-      <style>{`
-        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .2; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @media (max-width: 900px) {
-          .hero-inner {
-            flex-direction: column !important;
-            text-align: center !important;
-          }
-          .hero-left {
-            align-items: center !important;
-          }
-        }
-      `}</style>
     </section>
   );
-};
+}
 
-export default Hero;
+export default HeroSection;

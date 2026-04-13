@@ -85,15 +85,6 @@ const Header = () => {
               >
                 O.A
               </motion.span>
-
-              {/* 5. OUTER GLOW EFFECT */}
-              <motion.div
-                variants={{
-                  initial: { opacity: 0, scale: 0.5 },
-                  hover: { opacity: 1, scale: 1.3 },
-                }}
-                className="absolute inset-0 bg-cyan-500/20 blur-lg -z-10"
-              />
             </motion.div>
 
             <motion.span
@@ -127,15 +118,6 @@ const Header = () => {
               >
                 <div className="w-1/2 h-full bg-linear-to-br from-transparent via-cyan-400/40 to-transparent skew-x-12" />
               </motion.div>
-
-              {/* VERY SUBTLE UNDERLINE (Optional - remove if you want it even cleaner) */}
-              <motion.div
-                variants={{
-                  initial: { scaleX: 0, opacity: 0 },
-                  hover: { scaleX: 1, opacity: 1 },
-                }}
-                className="absolute bottom-0 left-0 w-full h-px bg-linear-to-br from-transparent via-cyan-500/50 to-transparent origin-left"
-              />
             </motion.span>
           </div>
         </motion.div>
@@ -183,8 +165,6 @@ const Header = () => {
               </span>
 
               <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-linear-to-br from-cyan-400 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
-
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 blur-md bg-cyan-400/20 transition duration-300 rounded-md"></span>
             </motion.div>
           ))}
         </nav>
@@ -208,12 +188,6 @@ const Header = () => {
               >
                 {/* ICON */}
                 <Icon className="text-zinc-500 group-hover:text-cyan-400 transition duration-300 text-lg relative z-10" />
-
-                {/* BACKGROUND GLOW */}
-                <div className="absolute inset-0 rounded-full bg-cyan-400/10 opacity-0 group-hover:opacity-100 blur-md transition duration-300"></div>
-
-                {/* SOFT BACKPLATE */}
-                <div className="absolute inset-0 rounded-full bg-white/5 opacity-0 group-hover:opacity-100 transition duration-300"></div>
               </motion.div>
             ))}
           </div>
@@ -223,12 +197,6 @@ const Header = () => {
             whileHover="hover"
             initial="initial"
             whileTap={{ scale: 0.95 }}
-            animate={{
-              y: [0, -2, 0],
-            }}
-            transition={{
-              y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-            }}
             className="relative px-6 py-2 rounded-xl overflow-hidden border border-transparent flex items-center justify-center cursor-pointer"
           >
             {/* 1. THE MAIN GRADIENT BACKGROUND (Fades out) */}
@@ -269,15 +237,6 @@ const Header = () => {
             >
               Hire Me
             </motion.span>
-
-            {/* 5. OUTER GLOW EFFECT */}
-            <motion.div
-              variants={{
-                initial: { opacity: 0, scale: 0.5 },
-                hover: { opacity: 1, scale: 1.2 },
-              }}
-              className="absolute inset-0 bg-cyan-500/20 blur-xl -z-10"
-            />
           </motion.button>
         </motion.div>
         {/* MOBILE TOGGLE BUTTON */}
@@ -302,18 +261,6 @@ const Header = () => {
             >
               {isOpen ? <FiX /> : <FiMenu />}
             </motion.div>
-
-            {/* COOL COLOR GLOW BEHIND THE ICON */}
-            <motion.div
-              animate={{
-                opacity: isOpen ? 1 : 0,
-                scale: isOpen ? 1.2 : 0.8,
-              }}
-              className="absolute inset-0 bg-cyan-500/20 blur-md rounded-full -z-10"
-            />
-
-            {/* HOVER EFFECT (Matches your other buttons) */}
-            <div className="absolute inset-0 rounded-xl bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </motion.div>
         {/* MOBILE MENU OVERLAY */}
