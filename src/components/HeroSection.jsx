@@ -2,9 +2,10 @@
 // Only animates opacity + transform — zero layout cost, runs on GPU.
 // gsap.context() scopes everything and ctx.revert() cleans up on unmount.
 
-import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
+import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
+import robotFallback from "../assets/robot.png";
 
 // ── Spline lazy loaded so it never blocks the initial render
 const Spline = lazy(() => import("@splinetool/react-spline"));
@@ -44,7 +45,7 @@ const LoadingLogo = () => (
       <motion.div
         animate={{ top: ["10%", "90%", "10%"], opacity: [0, 1, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        className="absolute w-full h-[1px] bg-linear-to-r from-transparent via-cyan-400 to-transparent z-10"
+        className="absolute w-full h-px bg-linear-to-r from-transparent via-cyan-400 to-transparent z-10"
       />
     </div>
     <div className="mt-8 flex flex-col items-center gap-2">
@@ -81,6 +82,10 @@ function useTypewriter(words) {
 
   useEffect(() => {
     let timeout;
+    indexRef.current = 0;
+    isDeletingRef.current = false;
+    textRef.current = "";
+
     const tick = () => {
       const current = words[indexRef.current % words.length];
       const isDeleting = isDeletingRef.current;
@@ -109,7 +114,7 @@ function useTypewriter(words) {
     };
     timeout = setTimeout(tick, 800);
     return () => clearTimeout(timeout);
-  }, []); // ← empty, runs once only
+  }, [words]);
 
   return displayed;
 }
@@ -117,8 +122,18 @@ function useTypewriter(words) {
 // ─── HERO ─────────────────────────────────────────────────────────────────────
 function HeroSection() {
   const role = useTypewriter(ROLES);
-  const mousePos = useRef({ x: 0, y: 0 });
   const [showRobot, setShowRobot] = useState(false);
+  const [enableSpline, setEnableSpline] = useState(false);
+  const [lowPerfMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const isMobile = window.innerWidth < 1024;
+    const lowCoreCount =
+      typeof navigator.hardwareConcurrency === "number" &&
+      navigator.hardwareConcurrency <= 4;
+    const saveData = Boolean(navigator.connection?.saveData);
+    return media.matches || isMobile || lowCoreCount || saveData;
+  });
   const containerRef = useRef(); // GSAP scope
 
   // Show robot after loading animation
@@ -127,17 +142,30 @@ function HeroSection() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Mouse tracking
+  // Delay heavy Spline load until after intro + idle time.
   useEffect(() => {
-    const handleMove = (e) => {
-      mousePos.current = {
-        x: (e.clientX / window.innerWidth - 0.5) * 2,
-        y: (e.clientY / window.innerHeight - 0.5) * 2,
-      };
+    if (!showRobot || lowPerfMode) return;
+
+    let timeoutId;
+    let idleId;
+
+    const startSpline = () => {
+      timeoutId = window.setTimeout(() => setEnableSpline(true), 800);
     };
-    window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
-  }, []);
+
+    if ("requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(startSpline, { timeout: 1500 });
+    } else {
+      startSpline();
+    }
+
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      if (idleId && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
+    };
+  }, [showRobot, lowPerfMode]);
 
   // ── GSAP entrance ──────────────────────────────────────────────────────────
   // Runs once on mount. Only uses opacity + translateY + skewY (all GPU, no layout cost).
@@ -192,7 +220,7 @@ function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-screen overflow-hidden flex items-center"
+      className="relative h-screen flex items-center"
     >
       <div
         className="w-full h-full grid
@@ -254,10 +282,42 @@ function HeroSection() {
 
         {/* ── RIGHT — Spline robot ── */}
         <div className="relative w-full h-full flex items-center justify-center min-h-[400px]">
+          {/* Ambient glow behind robot (blends into page, no card edges) */}
+          <div className="pointer-events-none absolute inset-0">
+            <div
+              className="absolute left-[42%] top-[50%] h-[620px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[108px]"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(34,211,238,0.26) 0%, rgba(14,165,233,0.17) 38%, transparent 78%)",
+              }}
+            />
+            <div
+              className="absolute left-[58%] top-[52%] h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(96,165,250,0.18) 0%, rgba(129,140,248,0.11) 40%, transparent 76%)",
+              }}
+            />
+          </div>
           <AnimatePresence mode="wait">
             {!showRobot ? (
               <motion.div key="loader">
                 <LoadingLogo />
+              </motion.div>
+            ) : lowPerfMode ? (
+              <motion.div
+                key="robot-fallback"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.75 }}
+                className="relative z-10 w-full h-full flex items-center justify-center"
+              >
+                <img
+                  src={robotFallback}
+                  alt="Robot preview"
+                  loading="lazy"
+                  className="w-[88%] max-w-[540px] object-contain drop-shadow-[0_0_30px_rgba(34,211,238,0.25)]"
+                />
               </motion.div>
             ) : (
               <motion.div
@@ -265,11 +325,11 @@ function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1.2 }}
-                className="w-full h-full"
+                className="relative z-10 w-full h-full"
               >
                 <Suspense fallback={null}>
                   <div className="w-full h-full scale-[1.05] origin-center">
-                    <Spline scene="https://prod.spline.design/Vb-xcbhbH3Sv0Iea/scene.splinecode" />
+                    {enableSpline ? <Spline scene="/scene.splinecode" /> : null}
                   </div>
                 </Suspense>
               </motion.div>

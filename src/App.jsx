@@ -1,61 +1,41 @@
-import Header from "./components/Header";
+import { useEffect } from "react";
+import Header from "./components/header";
 import HeroSection from "./components/HeroSection";
+import AboutSection from "./components/AboutSection";
 import CustomCursor from "./components/CustomCursor";
 
 function App() {
+  // Mouse-following glow — updates a CSS variable, zero re-renders
+  useEffect(() => {
+    const handleMove = (e) => {
+      document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
+      document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
+    };
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, []);
+
   return (
     <>
-      {/* ── FIXED SPACE BACKGROUND
-            Lives here once, stays behind every section on the whole site.
-            -z-10 puts it behind everything. pointer-events-none so it
-            never blocks clicks.                                          ── */}
+      {/* ── FIXED BACKGROUND — 2 light sources + mouse glow ── */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        {/* Purple nebula — top right */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-10%",
-            right: "-10%",
-            width: 700,
-            height: 700,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(88,28,219,0.35) 0%, rgba(109,40,217,0.15) 40%, transparent 70%)",
-          }}
-        />
+        {/* Base — very dark blue-black */}
+        <div className="absolute inset-0 bg-[#02000f]" />
 
-        {/* Teal nebula — bottom left */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: "-10%",
-            left: "-8%",
-            width: 620,
-            height: 620,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(8,145,178,0.30) 0%, rgba(6,182,212,0.12) 40%, transparent 70%)",
-          }}
-        />
+        {/* Light source 1 — cyan, lower left */}
+        <div className="aurora aurora-3" />
 
-        {/* Faint indigo — center, ties the two together */}
-        <div
-          style={{
-            position: "absolute",
-            top: "30%",
-            left: "35%",
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(49,10,101,0.20) 0%, transparent 65%)",
-          }}
-        />
+        {/* Light source 2 — blue/purple, bottom right */}
+        <div className="aurora aurora-2" />
+
+        {/* Mouse glow — lazily follows cursor */}
+        <div className="mouse-glow" />
       </div>
 
       <CustomCursor />
       <Header />
       <HeroSection />
+      <AboutSection />
     </>
   );
 }
