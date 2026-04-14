@@ -1,7 +1,3 @@
-// STEP 6 — GSAP entrance animations.
-// Only animates opacity + transform — zero layout cost, runs on GPU.
-// gsap.context() scopes everything and ctx.revert() cleans up on unmount.
-
 import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
