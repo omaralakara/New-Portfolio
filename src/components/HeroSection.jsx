@@ -220,7 +220,7 @@ function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-screen flex items-center"
+      className="relative h-dvh overflow-hidden flex items-center"
     >
       <div
         className="w-full h-full grid
@@ -281,7 +281,7 @@ function HeroSection() {
         </div>
 
         {/* ── RIGHT — Spline robot ── */}
-        <div className="relative w-full h-full flex items-center justify-center min-h-[400px]">
+        <div className="relative w-full h-full flex items-center justify-center min-h-[260px] sm:min-h-[320px] lg:min-h-[400px]">
           {/* Ambient glow behind robot (blends into page, no card edges) */}
           <div className="pointer-events-none absolute inset-0">
             <div

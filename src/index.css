@@ -15,18 +15,7 @@ body {
   color: white;
   scroll-behavior: smooth;
   font-family: "Mona Sans", sans-serif;
-  background:
-    radial-gradient(
-      1200px circle at 24% 82%,
-      rgba(34, 211, 238, 0.08) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      1000px circle at 92% 88%,
-      rgba(59, 130, 246, 0.14) 0%,
-      transparent 50%
-    ),
-    radial-gradient(ellipse at 20% 50%, #05001a 0%, #000000 52%, #00070f 100%);
+  background: #000000;
   min-height: 100vh;
   background-color: #000000;
 }
@@ -35,111 +24,6 @@ body {
   position: relative;
   min-height: 100vh;
   isolation: isolate;
-}
-
-.aurora {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(80px);
-  opacity: 0.5;
-  transform: translateZ(0);
-  will-change: transform, opacity;
-  animation: aurora-drift 16s ease-in-out infinite alternate;
-}
-
-.aurora-3 {
-  width: min(68vw, 780px);
-  height: min(68vw, 780px);
-  bottom: -32%;
-  left: -24%;
-  background: radial-gradient(
-    circle,
-    rgba(34, 211, 238, 0.22) 0%,
-    rgba(56, 189, 248, 0.08) 36%,
-    transparent 72%
-  );
-  animation-duration: 18s;
-}
-
-.aurora-2 {
-  width: min(62vw, 720px);
-  height: min(62vw, 720px);
-  right: -16%;
-  bottom: -22%;
-  background: radial-gradient(
-    circle,
-    rgba(59, 130, 246, 0.28) 0%,
-    rgba(147, 51, 234, 0.12) 42%,
-    transparent 74%
-  );
-  animation-duration: 19s;
-}
-
-.mouse-glow {
-  position: absolute;
-  width: 520px;
-  height: 520px;
-  border-radius: 9999px;
-  pointer-events: none;
-  left: calc(var(--mouse-x, 50vw) - 260px);
-  top: calc(var(--mouse-y, 50vh) - 260px);
-  background: radial-gradient(
-    circle,
-    rgba(34, 211, 238, 0.12) 0%,
-    rgba(59, 130, 246, 0.08) 28%,
-    transparent 68%
-  );
-  filter: blur(56px);
-  mix-blend-mode: screen;
-  opacity: 0.65;
-  transition:
-    left 180ms linear,
-    top 180ms linear,
-    opacity 250ms ease;
-}
-
-@keyframes aurora-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.46;
-  }
-  100% {
-    transform: translate3d(14px, -24px, 0) scale(1.08);
-    opacity: 0.64;
-  }
-}
-
-@media (max-width: 768px) {
-  .aurora {
-    filter: blur(56px);
-    opacity: 0.38;
-  }
-
-  .mouse-glow {
-    width: 340px;
-    height: 340px;
-    left: calc(var(--mouse-x, 50vw) - 170px);
-    top: calc(var(--mouse-y, 50vh) - 170px);
-    filter: blur(44px);
-    opacity: 0.48;
-  }
-}
-
-@media (pointer: coarse) {
-  .mouse-glow {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aurora {
-    animation: none;
-  }
-
-  .mouse-glow {
-    display: none;
-    transition: none;
-  }
 }
 
 /* Force hide the default cursor on EVERYTHING when using a mouse */
