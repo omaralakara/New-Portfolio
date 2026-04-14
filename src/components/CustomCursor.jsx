@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import gsap from "gsap";
+import { createPortal } from "react-dom";
 
 const CustomCursor = () => {
   useEffect(() => {
@@ -92,7 +93,9 @@ const CustomCursor = () => {
     };
   }, []);
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <>
       {/* The Dot */}
       <div
@@ -118,7 +121,8 @@ const CustomCursor = () => {
           }}
         />
       ))}
-    </>
+    </>,
+    document.body,
   );
 };
 
