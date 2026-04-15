@@ -2,35 +2,25 @@
 @import "tailwindcss";
 
 :root {
-  --gradient: radial-gradient(circle, #e5e5e5 0%, #fff 100%);
   --color-cyan: #22d3ee;
   --color-blue: #3b82f6;
 }
 
 html,
 body {
-  width: 100dvw;
+  margin: 0;
+  width: 100%;
   overflow-x: hidden;
-  background-color: black;
-  color: white;
-  scroll-behavior: smooth;
+  background: #000;
+  color: #fff;
   font-family: "Mona Sans", sans-serif;
-  background: #000000;
+  scroll-behavior: smooth;
   min-height: 100vh;
-  background-color: #000000;
 }
 
-#root {
-  position: relative;
-  min-height: 100vh;
-  isolation: isolate;
-}
-
-/* Force hide the default cursor on EVERYTHING when using a mouse */
+/* custom cursor */
 @media (pointer: fine) {
-  *,
-  *::before,
-  *::after {
-    cursor: none !important;
+  body {
+    cursor: none;
   }
 }

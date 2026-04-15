@@ -278,23 +278,6 @@ function HeroSection() {
 
         {/* ── RIGHT — Spline robot ── */}
         <div className="relative w-full h-full flex items-center justify-center min-h-[260px] sm:min-h-[320px] lg:min-h-[400px]">
-          {/* Ambient glow behind robot (blends into page, no card edges) */}
-          <div className="pointer-events-none absolute inset-0">
-            <div
-              className="absolute left-[42%] top-[50%] h-[620px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[108px]"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(34,211,238,0.26) 0%, rgba(14,165,233,0.17) 38%, transparent 78%)",
-              }}
-            />
-            <div
-              className="absolute left-[58%] top-[52%] h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(96,165,250,0.18) 0%, rgba(129,140,248,0.11) 40%, transparent 76%)",
-              }}
-            />
-          </div>
           <AnimatePresence mode="wait">
             {!showRobot ? (
               <motion.div key="loader">
@@ -324,7 +307,8 @@ function HeroSection() {
                 className="relative z-10 w-full h-full"
               >
                 <Suspense fallback={null}>
-                  <div className="w-full h-full scale-[1.05] origin-center">
+                  <div className="w-full h-full scale-100 lg:scale-[1.05] origin-center">
+                    {" "}
                     {enableSpline ? <Spline scene="/scene.splinecode" /> : null}
                   </div>
                 </Suspense>
