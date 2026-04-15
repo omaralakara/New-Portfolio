@@ -80,6 +80,14 @@ const Header = () => {
                   <a
                     key={item}
                     href={`#${item.toLowerCase()}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document
+                        .getElementById(item.toLowerCase())
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                        });
+                    }}
                     className={`
                    relative px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em]
                    transition-all duration-300

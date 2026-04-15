@@ -1,7 +1,130 @@
 import React from "react";
 
-const HeroSection = () => {
-  return <div></div>;
+const Hero = () => {
+  return (
+    <section
+      id="home"
+      className="relative min-h-screen w-full bg-black text-white overflow-hidden"
+    >
+      {/* THE ALIGNMENT WRAPPER */}
+      <div className="container mx-auto flex min-h-screen flex-col justify-between px-4 py-8 pt-20 sm:px-6 sm:py-10 sm:pt-24 lg:px-8">
+        {/* --- MIDDLE SECTION --- */}
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 text-center sm:px-6">
+          {/* --- 1. BUTTON WRAPPER --- */}
+          <div className="group relative mb-5 pointer-events-auto sm:mb-6">
+            {/* The Multi-Color Aura Glow */}
+            <div className="absolute -inset-[2px] rounded-full opacity-80 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
+              <div
+                className="absolute inset-[-250%] animate-[spin_4s_linear_infinite]"
+                style={{
+                  background: `conic-gradient(
+          from 0deg, 
+          transparent 0deg, 
+          #fbbf24 45deg,   /* Yellow */
+          #ef4444 90deg,   /* Red */
+          #ec4899 135deg,  /* Pink */
+          #3b82f6 180deg,  /* Blue */
+          transparent 270deg
+        )`,
+                }}
+              />
+            </div>
+
+            <a
+              href="https://linkedin.com/in/omar-al-akara"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center gap-2 rounded-full border border-zinc-900 bg-black px-4 py-2 text-[9px] font-bold uppercase tracking-widest transition-all duration-300 group-hover:bg-zinc-950 sm:px-5 sm:text-[10px]"
+            >
+              <span className="text-zinc-500 transition-colors duration-300 group-hover:text-white">
+                Say hi on
+              </span>
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-3 w-3 text-[#0077B5] transition-all duration-300 group-hover:scale-110 sm:h-3.5 sm:w-3.5"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+
+              <span className="font-serif text-xs text-zinc-500 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white sm:text-sm">
+                &gt;
+              </span>
+            </a>
+          </div>
+
+          {/* OMAR - Slightly smaller for better padding */}
+          <h1 className="select-none text-[16vw] font-[1000] uppercase leading-[0.8] tracking-tighter sm:text-[14vw] lg:text-[12vw]">
+            OMAR.AK
+          </h1>
+
+          {/* SUBTEXT - More margin for airiness */}
+          <div className="pointer-events-auto mt-10 max-w-[90vw] sm:mt-14 sm:max-w-3xl lg:mt-16 lg:max-w-4xl">
+            <p className="mb-3 text-[9px] uppercase tracking-[0.2em] text-zinc-500 sm:mb-4 sm:text-[10px] sm:tracking-[0.32em] md:text-xs md:tracking-[0.4em]">
+              Building cloud-native fintech and blockchain solutions that
+            </p>
+            {/* Impact Text - Elegant Serif Style */}
+            <h2 className="text-3xl font-serif italic lowercase tracking-tight text-zinc-100 opacity-90 sm:text-5xl md:text-6xl lg:text-7xl">
+              deliver real impact.
+            </h2>
+          </div>
+        </div>
+
+        {/* --- BOTTOM SECTION --- */}
+        <div className="z-10 mt-auto flex w-full flex-col items-center justify-between gap-6 pb-2 sm:flex-row sm:items-end sm:gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-xl text-green-500 sm:text-2xl">
+              <svg
+                stroke="currentColor"
+                fill="none"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                height="1em"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div className="flex flex-col text-center text-[9px] font-bold uppercase leading-tight tracking-[0.16em] sm:text-[10px] sm:tracking-[0.2em]">
+              <span>BASED IN BEKAA,</span>
+              <span className="text-zinc-500">LEBANON</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-xl text-blue-500 sm:text-2xl">
+              <svg
+                stroke="currentColor"
+                fill="none"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                height="1em"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+              </svg>
+            </div>
+            <div className="flex flex-col text-center text-[9px] font-bold uppercase leading-tight tracking-[0.16em] sm:text-[10px] sm:tracking-[0.2em]">
+              <span>SOFTWARE ENGINEER,</span>
+              <span className="text-zinc-500">& INSTRUCTOR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </section>
+  );
 };
 
-export default HeroSection;
+export default Hero;
