@@ -54,22 +54,21 @@ const Header = () => {
           <div className="flex w-full max-w-fit mx-auto items-center justify-center gap-4 h-12 px-5 rounded-full bg-zinc-950/40 border border-white/10 backdrop-blur-md lg:justify-between lg:max-w-none lg:bg-transparent lg:border-none lg:h-full lg:px-0">
             {/* LEFT */}
             <div className="flex items-center gap-5">
-              {/* LOGO (FIXED FONT) */}
               <span className="font-display text-xl tracking-tight text-white">
-                O<span className="text-sky-400">A</span>
+                O<span className="text-rose-400">A</span>
               </span>
 
               {/* STATUS */}
               <div className="hidden sm:flex items-center gap-3 border-l border-white/10 pl-5">
-                <span className="w-1 h-1 rounded-full bg-sky-400" />
+                <span className="w-1 h-1 rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500" />
 
                 <div className="flex flex-col leading-none gap-1">
-                  <span className="text-[10px] font-semibold tracking-[0.25em] text-sky-400 uppercase">
-                    Always Building
+                  <span className="text-[10px] font-semibold tracking-[0.25em] uppercase bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500">
+                    Fintech / Blockchain
                   </span>
 
                   <span className="text-[10px] font-medium tracking-[0.25em] text-zinc-500 uppercase">
-                    Always Learning
+                    Lebanon → Worldwide
                   </span>
                 </div>
               </div>
@@ -107,8 +106,8 @@ const Header = () => {
                       {item}
                       <span
                         className={`
-    absolute left-1/2 -translate-x-1/2 bottom-0 h-[1px] w-6
-    bg-sky-400 transition-all duration-300
+ absolute left-1/2 -translate-x-1/2 bottom-0 h-[1px] w-4
+    bg-rose-400 transition-all duration-300
     ${activeSection === item.toLowerCase() ? "opacity-100" : "opacity-0"}
   `}
                       />
@@ -122,14 +121,12 @@ const Header = () => {
                 <a
                   href="#contact"
                   className="
-                px-4 py-2 text-[10px] font-semibold uppercase tracking-widest
-                text-white rounded-full
-                bg-sky-400/10 border border-sky-400/20
-                transition-all duration-300
-                hover:bg-sky-400/20
-                hover:border-sky-400/40
-                hover:-translate-y-[1px]
-                hover:shadow-[0_0_20px_rgba(56,189,248,0.25)]
+                  px-4 py-2 text-[10px] font-semibold uppercase tracking-widest
+                  text-zinc-400 rounded-full
+                  bg-white/5 border border-white/10
+                  transition-all duration-300
+                  hover:text-white hover:bg-white/10 hover:border-white/20
+                  hover:-translate-y-[1px]
                 "
                 >
                   Let’s Work
@@ -141,7 +138,7 @@ const Header = () => {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-9 w-9 flex items-center justify-center rounded-full bg-zinc-950/40 border border-white/10 text-white transition-all duration-300 hover:border-sky-400/30 hover:-translate-y-[1px] hover:shadow-[0_0_15px_rgba(56,189,248,0.15)]"
+                className="h-9 w-9 flex items-center justify-center rounded-full bg-zinc-950/40 border border-white/10 text-zinc-400 transition-all duration-300 hover:text-white hover:border-white/20 hover:bg-white/5 hover:-translate-y-[1px]"
               >
                 <FiGithub size={18} />
               </a>
