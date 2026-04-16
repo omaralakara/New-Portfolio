@@ -46,49 +46,55 @@ const Header = () => {
   }, []);
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-black/40 backdrop-blur-md">
-        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          {/* LEFT */}
-          <div className="flex items-center gap-5">
-            {/* LOGO (FIXED FONT) */}
-            <span className="font-display text-xl tracking-tight text-white">
-              O<span className="text-sky-400">A</span>
-            </span>
+      <header className="fixed top-0 w-full z-50 lg:bg-black/40 lg:backdrop-blur-md">
+        {" "}
+        <div className="container mx-auto px-4 pt-4 h-20 flex items-center justify-between lg:px-6 lg:pt-0">
+          {/* Mobile responsive div*/}
 
-            {/* STATUS */}
-            <div className="hidden sm:flex items-center gap-3 border-l border-white/10 pl-5">
-              <span className="w-1 h-1 rounded-full bg-sky-400" />
+          <div className="flex w-full max-w-fit mx-auto items-center justify-center gap-4 h-12 px-5 rounded-full bg-zinc-950/40 border border-white/10 backdrop-blur-md lg:justify-between lg:max-w-none lg:bg-transparent lg:border-none lg:h-full lg:px-0">
+            {/* LEFT */}
+            <div className="flex items-center gap-5">
+              {/* LOGO (FIXED FONT) */}
+              <span className="font-display text-xl tracking-tight text-white">
+                O<span className="text-sky-400">A</span>
+              </span>
 
-              <div className="flex flex-col leading-none gap-1">
-                <span className="text-[10px] font-semibold tracking-[0.25em] text-sky-400 uppercase">
-                  Always Building
-                </span>
+              {/* STATUS */}
+              <div className="hidden sm:flex items-center gap-3 border-l border-white/10 pl-5">
+                <span className="w-1 h-1 rounded-full bg-sky-400" />
 
-                <span className="text-[10px] font-medium tracking-[0.25em] text-zinc-500 uppercase">
-                  Always Learning
-                </span>
+                <div className="flex flex-col leading-none gap-1">
+                  <span className="text-[10px] font-semibold tracking-[0.25em] text-sky-400 uppercase">
+                    Always Building
+                  </span>
+
+                  <span className="text-[10px] font-medium tracking-[0.25em] text-zinc-500 uppercase">
+                    Always Learning
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* RIGHT */}
-          <div className="flex items-center gap-1.5">
-            {/* NAV */}
-            <div className="hidden lg:flex items-center bg-zinc-950/40 border border-white/10 rounded-full px-1 py-1 backdrop-blur-md">
-              <nav className="flex items-center">
-                {navItems.map((item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document
-                        .getElementById(item.toLowerCase())
-                        ?.scrollIntoView({
-                          behavior: "smooth",
-                        });
-                    }}
-                    className={`
+            {/* THE SEPARATOR | */}
+            <div className="h-5 w-[1.5px] bg-white/30 rounded-full lg:hidden" />
+            {/* RIGHT */}
+            <div className="flex items-center gap-1.5">
+              {/* NAV */}
+              <div className="hidden lg:flex items-center bg-zinc-950/40 border border-white/10 rounded-full px-1 py-1 backdrop-blur-md">
+                <nav className="flex items-center">
+                  {navItems.map((item) => (
+                    <a
+                      key={item}
+                      href={`#${item.toLowerCase()}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document
+                          .getElementById(item.toLowerCase())
+                          ?.scrollIntoView({
+                            behavior: "smooth",
+                          });
+                      }}
+                      className={`
                    relative px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em]
                    transition-all duration-300
                    ${
@@ -97,25 +103,25 @@ const Header = () => {
                        : "text-zinc-400 hover:text-white"
                    }
                  `}
-                  >
-                    {item}
-                    <span
-                      className={`
+                    >
+                      {item}
+                      <span
+                        className={`
     absolute left-1/2 -translate-x-1/2 bottom-0 h-[1px] w-6
     bg-sky-400 transition-all duration-300
     ${activeSection === item.toLowerCase() ? "opacity-100" : "opacity-0"}
   `}
-                    />
-                  </a>
-                ))}
-              </nav>
+                      />
+                    </a>
+                  ))}
+                </nav>
 
-              <div className="w-px h-5 bg-white/10 mx-1" />
+                <div className="w-px h-5 bg-white/10 mx-1" />
 
-              {/* CTA */}
-              <a
-                href="#contact"
-                className="
+                {/* CTA */}
+                <a
+                  href="#contact"
+                  className="
                 px-4 py-2 text-[10px] font-semibold uppercase tracking-widest
                 text-white rounded-full
                 bg-sky-400/10 border border-sky-400/20
@@ -125,28 +131,29 @@ const Header = () => {
                 hover:-translate-y-[1px]
                 hover:shadow-[0_0_20px_rgba(56,189,248,0.25)]
                 "
+                >
+                  Let’s Work
+                </a>
+              </div>
+
+              {/* GITHUB */}
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-9 w-9 flex items-center justify-center rounded-full bg-zinc-950/40 border border-white/10 text-white transition-all duration-300 hover:border-sky-400/30 hover:-translate-y-[1px] hover:shadow-[0_0_15px_rgba(56,189,248,0.15)]"
               >
-                Let’s Work
+                <FiGithub size={18} />
               </a>
+
+              {/* MOBILE */}
+              <button
+                onClick={() => setIsMenuOpen(true)}
+                className="lg:hidden text-white ml-2"
+              >
+                <FiMenu size={28} />
+              </button>
             </div>
-
-            {/* GITHUB */}
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="h-9 w-9 flex items-center justify-center rounded-full bg-zinc-950/40 border border-white/10 text-white transition-all duration-300 hover:border-sky-400/30 hover:-translate-y-[1px] hover:shadow-[0_0_15px_rgba(56,189,248,0.15)]"
-            >
-              <FiGithub size={18} />
-            </a>
-
-            {/* MOBILE */}
-            <button
-              onClick={() => setIsMenuOpen(true)}
-              className="lg:hidden text-white ml-2"
-            >
-              <FiMenu size={28} />
-            </button>
           </div>
         </div>
       </header>

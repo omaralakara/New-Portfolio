@@ -65,15 +65,24 @@ const Hero = () => {
             <p className="mb-3 text-[9px] uppercase tracking-[0.2em] text-zinc-500 sm:mb-4 sm:text-[10px] sm:tracking-[0.32em] md:text-xs md:tracking-[0.4em]">
               Building cloud-native fintech and blockchain solutions that
             </p>
-            {/* Impact Text - Elegant Serif Style */}
             <h2 className="text-3xl font-serif italic lowercase tracking-tight text-zinc-100 opacity-90 sm:text-5xl md:text-6xl lg:text-7xl">
-              deliver real impact.
+              deliver{" "}
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage: `linear-gradient(to right, #fbbf24, #ef4444, #ec4899, #3b82f6)`,
+                  WebkitBackgroundClip: "text",
+                }}
+              >
+                real impact.
+              </span>
             </h2>
           </div>
         </div>
 
         {/* --- BOTTOM SECTION --- */}
-        <div className="z-10 mt-auto flex w-full flex-col items-center justify-between gap-6 pb-2 sm:flex-row sm:items-end sm:gap-4">
+        <div className="z-10 mt-auto flex w-full flex-row items-end justify-center gap-8 pb-2 sm:justify-between sm:gap-4">
+          {/* Location Section */}
           <div className="flex flex-col items-center gap-2">
             <div className="text-xl text-green-500 sm:text-2xl">
               <svg
@@ -95,6 +104,7 @@ const Hero = () => {
             </div>
           </div>
 
+          {/* Role Section */}
           <div className="flex flex-col items-center gap-2">
             <div className="text-xl text-blue-500 sm:text-2xl">
               <svg
