@@ -13,6 +13,13 @@ const navItems = [
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
   }, [isMenuOpen]);
@@ -48,7 +55,7 @@ const Header = () => {
     <>
       <header className="fixed top-0 w-full z-50 lg:bg-black/40 lg:backdrop-blur-md">
         {" "}
-        <div className="container mx-auto px-4 pt-4 h-20 flex items-center justify-between lg:px-6 lg:pt-0">
+        <div className="container mx-auto px-4 pt-4 h-20 flex items-center justify-between lg:px-6 lg:pt-0 lg:relative">
           {/* Mobile responsive div*/}
 
           <div className="flex w-full max-w-fit mx-auto items-center justify-center gap-4 h-12 px-5 rounded-full bg-zinc-950/40 border border-white/10 backdrop-blur-md lg:justify-between lg:max-w-none lg:bg-transparent lg:border-none lg:h-full lg:px-0">
@@ -59,9 +66,15 @@ const Header = () => {
               </span>
 
               {/* STATUS */}
-              <div className="hidden sm:flex items-center gap-3 border-l border-white/10 pl-5">
+              <div
+                className={`hidden sm:flex items-center gap-3 border-l border-white/10 pl-5 transition-all duration-500 ${
+                  scrolled
+                    ? "opacity-0 -translate-x-3 pointer-events-none"
+                    : "opacity-100 translate-x-0"
+                }`}
+              >
+                {" "}
                 <span className="w-1 h-1 rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500" />
-
                 <div className="flex flex-col leading-none gap-1">
                   <span className="text-[10px] font-semibold tracking-[0.25em] uppercase bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500">
                     Fintech / Blockchain
@@ -79,7 +92,11 @@ const Header = () => {
             {/* RIGHT */}
             <div className="flex items-center gap-1.5">
               {/* NAV */}
-              <div className="hidden lg:flex items-center bg-zinc-950/40 border border-white/10 rounded-full px-1 py-1 backdrop-blur-md">
+              <div
+                className={`hidden lg:flex items-center bg-zinc-950/40 border border-white/10 rounded-full px-1 py-1 backdrop-blur-md transition-all duration-500 ${
+                  scrolled ? "absolute left-1/2 -translate-x-1/2" : "relative"
+                }`}
+              >
                 <nav className="flex items-center">
                   {navItems.map((item) => (
                     <a
