@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FiGithub, FiMenu, FiX } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
   "Home",
@@ -61,11 +62,16 @@ const Header = () => {
           <div className="flex w-full max-w-fit mx-auto items-center justify-center gap-4 h-12 px-5 rounded-full bg-zinc-950/40 border border-white/10 backdrop-blur-md lg:justify-between lg:max-w-none lg:bg-transparent lg:border-none lg:h-full lg:px-0">
             {/* LEFT */}
             <div className="flex items-center gap-5">
-              <span className="font-display text-xl tracking-tight text-white">
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="font-display text-xl tracking-tight text-white"
+              >
                 O<span className="text-rose-400">A</span>
-              </span>
-
+              </motion.span>
               {/* STATUS */}
+
               <div
                 className={`hidden sm:flex items-center gap-3 border-l border-white/10 pl-5 transition-all duration-500 ${
                   scrolled
@@ -91,8 +97,10 @@ const Header = () => {
             <div className="h-5 w-[1.5px] bg-white/30 rounded-full lg:hidden" />
             {/* RIGHT */}
             <div className="flex items-center gap-1.5">
-              {/* NAV */}
-              <div
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
                 className={`hidden lg:flex items-center bg-zinc-950/40 border border-white/10 rounded-full px-1 py-1 backdrop-blur-md transition-all duration-500 ${
                   scrolled ? "absolute left-1/2 -translate-x-1/2" : "relative"
                 }`}
@@ -148,17 +156,19 @@ const Header = () => {
                 >
                   Let’s Work
                 </a>
-              </div>
+              </motion.div>
 
-              {/* GITHUB */}
-              <a
+              <motion.a
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-9 w-9 flex items-center justify-center rounded-full bg-zinc-950/40 border border-white/10 text-zinc-400 transition-all duration-300 hover:text-white hover:border-white/20 hover:bg-white/5 hover:-translate-y-[1px]"
               >
                 <FiGithub size={18} />
-              </a>
+              </motion.a>
 
               {/* MOBILE */}
               <button
@@ -178,33 +188,91 @@ const Header = () => {
 };
 
 const MobileMenu = ({ isOpen, onClose }) => (
-  <div
-    className={`fixed inset-0 z-[100] bg-black transition-transform duration-300 ${
-      isOpen ? "translate-y-0" : "-translate-y-full"
-    }`}
-  >
-    <div className="flex flex-col h-full p-8">
-      <div className="flex justify-between items-center mb-12">
-        <span className="text-white font-semibold">O.A</span>
-        <button onClick={onClose} className="text-white">
-          <FiX size={24} />
-        </button>
-      </div>
+  <AnimatePresence>
+    {isOpen && (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md lg:hidden"
+      >
+        {/* TOP BAR */}
+        <div className="flex justify-between items-center px-6 pt-6 pb-4 border-b border-white/5">
+          {/* LOGO — matches desktop */}
+          <span className="font-display text-xl tracking-tight text-white">
+            O<span className="text-rose-400">A</span>
+          </span>
 
-      <nav className="flex flex-col gap-8">
-        {navItems.map((item) => (
-          <a
-            key={item}
-            href={`#${item.toLowerCase()}`}
+          <div className="flex items-center gap-3">
+            {/* GITHUB */}
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-9 w-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-zinc-400 transition-all duration-300 hover:text-white hover:border-white/20"
+            >
+              <FiGithub size={16} />
+            </a>
+
+            {/* CLOSE */}
+            <button
+              onClick={onClose}
+              className="h-9 w-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-zinc-400 transition-all duration-300 hover:text-white hover:border-white/20"
+            >
+              <FiX size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* LINKS */}
+        <nav className="flex flex-col items-center justify-center gap-1 mt-16">
+          {navItems.map((item, index) => (
+            <motion.a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              onClick={onClose}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.3,
+                delay: index * 0.07,
+                ease: "easeOut",
+              }}
+              className="group relative text-4xl font-semibold text-zinc-500 hover:text-white transition-colors duration-300 py-2 tracking-tight"
+            >
+              {item}
+              {/* underline on hover */}
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-1 h-[1px] w-0 group-hover:w-6 bg-rose-400 transition-all duration-300" />
+            </motion.a>
+          ))}
+
+          <motion.a
+            href="#contact"
             onClick={onClose}
-            className="text-3xl font-medium text-zinc-300 hover:text-white transition"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: navItems.length * 0.07 + 0.1, duration: 0.3 }}
+            className="mt-8 px-8 py-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 rounded-full bg-white/5 border border-white/10 transition-all duration-300 hover:text-white hover:bg-white/10 hover:border-white/20"
           >
-            {item}
-          </a>
-        ))}
-      </nav>
-    </div>
-  </div>
+            Let's Work
+          </motion.a>
+        </nav>
+
+        {/* BOTTOM */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
+          className="absolute bottom-8 left-0 right-0 flex justify-center"
+        >
+          <span className="text-[10px] uppercase tracking-[0.3em] bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500">
+            Fintech / Blockchain
+          </span>
+        </motion.div>
+      </motion.div>
+    )}
+  </AnimatePresence>
 );
 
 export default Header;
