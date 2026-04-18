@@ -93,21 +93,21 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.9, ease: "easeOut" }}
-                className="inline-block"
+                className="inline-block mr-1 sm:mr-2 md:mr-3"
               >
-                deliver{"  "}
+                deliver
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 1.05, ease: "easeOut" }}
-                className="inline-block ml-4 bg-clip-text text-transparent"
+                className="inline-block bg-clip-text text-transparent"
                 style={{
                   backgroundImage: `linear-gradient(to right, #fbbf24, #ef4444, #ec4899, #3b82f6)`,
                   WebkitBackgroundClip: "text",
                 }}
               >
-                real impact.
+                real impact
               </motion.span>
             </h2>
           </div>

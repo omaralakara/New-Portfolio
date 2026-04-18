@@ -2,14 +2,7 @@ import { useState, useEffect } from "react";
 import { FiGithub, FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
-const navItems = [
-  "Home",
-  "About",
-  "Skills",
-  "Projects",
-  "Experience",
-  "Contact",
-];
+const navItems = ["Home", "About", "Experience", "Skills", "Projects"];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
